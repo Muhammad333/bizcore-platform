@@ -1,0 +1,38 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: bizcore
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bizcore
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+# BizCore Configuration
+bizcore:
+  app-code: BIZCORE
+  app-name: BizCore Platform
+  security-enabled: true
+  load-demo-data: true
+  jwt-secret: bizcore-jwt-secret-key-2024-very-long-and-secure-for-all-applications
+  jwt-expiration: 86400000
+
+logging:
+  level:
+    com.bizcore: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BizCore</title>
+    <link rel="stylesheet" href="css/bizcore.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>BizCore</h1>
+                <p>Enterprise Business Platform</p>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+                <h2>Sign In</h2>
+
+                <div id="errorMessage" class="alert alert-error" style="display: none;"></div>
+
+                <div class="form-group">
+                    <label class="form-label" for="companyCode">Company Code</label>
+                    <input type="text" id="companyCode" name="companyCode" class="form-control company-code-input" required autofocus placeholder="e.g., DEMO">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg">Sign In</button>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="register.html">Register Company</a></p>
+                </div>
+            </form>
+
+            <div class="demo-section">
+                <h3>Demo Account</h3>
+                <div class="demo-grid">
+                    <div class="demo-item" onclick="fillDemo('DEMO', 'admin', 'password123')">
+                        <strong>Admin</strong>
+                        <span>DEMO / admin</span>
+                    </div>
+                    <div class="demo-item" onclick="fillDemo('DEMO', 'manager', 'password123')">
+                        <strong>Manager</strong>
+                        <span>DEMO / manager</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bizcore.js"></script>
+    <script>
+        function fillDemo(company, username, password) {
+            document.getElementById('companyCode').value = company;
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.style.display = 'none';
+
+            const companyCode = document.getElementById('companyCode').value.toUpperCase();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ companyCode, username, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    BizCore.setAuth(data);
+                    window.location.href = 'app/';
+                } else {
+                    errorDiv.textContent = data.message || 'Login failed';
+                    errorDiv.style.display = 'flex';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Connection error. Please try again.';
+                errorDiv.style.display = 'flex';
+            }
+        });
+
+        // Check if already logged in
+        if (BizCore.isAuthenticated()) {
+            window.location.href = 'app/';
+        }
+    </script>
+</body>
+</html>
