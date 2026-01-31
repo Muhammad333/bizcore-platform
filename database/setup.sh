@@ -1,74 +1,93 @@
 #!/bin/bash
-# BizCore Database Setup Script
-# This script drops and recreates the database, then runs all migration scripts
+# ============================================
+# BizCore Database Setup Script (Linux/Mac)
+# ============================================
+# This script creates the database and runs all setup scripts
+# Usage: chmod +x setup.sh && ./setup.sh
+# ============================================
 
+echo ""
 echo "========================================"
-echo "BizCore Database Setup"
+echo "  BizCore Database Setup"
 echo "========================================"
 echo ""
 
-# Configuration
+# Configuration - Adjust these if needed
 PG_USER="postgres"
 DB_NAME="bizcore"
 
-# Step 1: Drop existing database
-echo "Step 1: Dropping existing database..."
-psql -U $PG_USER -c "DROP DATABASE IF EXISTS $DB_NAME;"
-if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to drop database"
-    exit 1
-fi
-echo "Database dropped successfully."
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo "Configuration:"
+echo "  User: $PG_USER"
+echo "  Database: $DB_NAME"
+echo ""
+
+# Step 1: Drop existing database (if exists)
+echo -e "[Step 1/5] Dropping existing database (if exists)..."
+psql -U $PG_USER -c "DROP DATABASE IF EXISTS $DB_NAME;" 2>/dev/null
+echo -e "${GREEN}Done.${NC}"
 echo ""
 
 # Step 2: Create new database
-echo "Step 2: Creating new database..."
+echo -e "[Step 2/5] Creating new database..."
 psql -U $PG_USER -c "CREATE DATABASE $DB_NAME;"
 if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to create database"
+    echo -e "${RED}ERROR: Failed to create database${NC}"
+    echo "Make sure PostgreSQL is running and user '$PG_USER' has CREATE DATABASE permission."
     exit 1
 fi
-echo "Database created successfully."
+echo -e "${GREEN}Done.${NC}"
 echo ""
 
-# Step 3: Run core tables script
-echo "Step 3: Running core tables script..."
-psql -U $PG_USER -d $DB_NAME -f core/tables.sql
+# Step 3: Create tables
+echo -e "[Step 3/5] Creating tables..."
+psql -U $PG_USER -d $DB_NAME -f setup/tables.sql
 if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to create core tables"
+    echo -e "${RED}ERROR: Failed to create tables${NC}"
     exit 1
 fi
-echo "Core tables created successfully."
+echo -e "${GREEN}Done.${NC}"
 echo ""
 
-# Step 4: Run references tables script
-echo "Step 4: Running references tables script..."
-psql -U $PG_USER -d $DB_NAME -f references/tables.sql
+# Step 4: Insert default data
+echo -e "[Step 4/5] Inserting default data..."
+psql -U $PG_USER -d $DB_NAME -f setup/default-data.sql
 if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to create reference tables"
+    echo -e "${RED}ERROR: Failed to insert default data${NC}"
     exit 1
 fi
-echo "Reference tables created successfully."
+echo -e "${GREEN}Done.${NC}"
 echo ""
 
-# Step 5: Run initial migration
-echo "Step 5: Running initial migration (test data)..."
-psql -U $PG_USER -d $DB_NAME -f migrations/2026/01/24.sql
+# Step 5: Load translations
+echo -e "[Step 5/5] Loading translations..."
+psql -U $PG_USER -d $DB_NAME -f setup/translations.sql
 if [ $? -ne 0 ]; then
-    echo "ERROR: Failed to load initial data"
+    echo -e "${RED}ERROR: Failed to load translations${NC}"
     exit 1
 fi
-echo "Initial data loaded successfully."
+echo -e "${GREEN}Done.${NC}"
 echo ""
 
 echo "========================================"
-echo "Database setup completed successfully!"
+echo -e "  ${GREEN}Setup Completed Successfully!${NC}"
 echo "========================================"
 echo ""
-echo "You can now start the application with: mvn spring-boot:run"
+echo "Database '$DB_NAME' is ready."
 echo ""
-echo "Default login credentials:"
-echo "  Company: DEMO"
+echo -e "${YELLOW}LOGIN CREDENTIALS:${NC}"
 echo "  Username: admin"
-echo "  Password: password123"
+echo "  Password: admin123"
+echo ""
+echo -e "${RED}IMPORTANT: Change the admin password after first login!${NC}"
+echo ""
+echo "NEXT STEPS:"
+echo "  1. Start backend:  cd bizcore && mvn spring-boot:run"
+echo "  2. Start frontend: cd bizcore/webapp && npm run dev"
+echo "  3. Open browser:   http://localhost:5173"
 echo ""

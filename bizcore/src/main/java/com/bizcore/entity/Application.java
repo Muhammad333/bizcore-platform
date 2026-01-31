@@ -29,10 +29,10 @@ public class Application {
     @Column(name = "base_url")
     private String baseUrl;
 
-    @Column(name = "is_active")
+    @Column(name = "active")
     private boolean active = true;
 
-    @Column(name = "is_public")
+    @Column(name = "public_access")
     private boolean publicAccess = false;
 
     @Column(name = "display_order")
@@ -41,10 +41,6 @@ public class Application {
     @ManyToMany(mappedBy = "applications")
     @JsonIgnoreProperties("applications")
     private Set<User> users = new HashSet<>();
-
-    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("application")
-    private Set<MenuItem> menuItems = new HashSet<>();
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -96,9 +92,6 @@ public class Application {
 
     public Set<User> getUsers() { return users; }
     public void setUsers(Set<User> users) { this.users = users; }
-
-    public Set<MenuItem> getMenuItems() { return menuItems; }
-    public void setMenuItems(Set<MenuItem> menuItems) { this.menuItems = menuItems; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

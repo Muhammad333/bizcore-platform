@@ -1,84 +1,79 @@
 # BizCore Platform - Documentation
 
-Complete documentation for the BizCore Platform.
-
-## 📚 Available Guides
+## Available Guides
 
 ### [Translation System (i18n)](TRANSLATION.md)
 Multi-language support with English, Russian, and Uzbek translations.
 
-**Topics covered:**
+**Topics:**
 - How the translation system works
-- Using `useTranslation()` hook in components
-- Translation key naming conventions
+- Using `useTranslation()` hook
 - Adding new translations
-- API endpoints for translations
-- Complete translation keys reference
+- API endpoints
 
-### [RBAC Security Fixes - Summary](RBAC-FIXES-SUMMARY.md)
-Summary of all security fixes applied to the Role-Based Access Control system.
-
-**Topics covered:**
-- Critical security vulnerabilities fixed
-- Backend authorization improvements
-- Frontend permission enhancements
-- Files modified
-- Testing checklist
-
-### [RBAC Testing Guide](RBAC-TESTING-GUIDE.md)
-Comprehensive guide for testing the RBAC implementation.
-
-**Topics covered:**
-- Security fixes overview
-- Step-by-step testing instructions
-- Test scenarios by role
-- Permission matrix
-- Common issues and solutions
-- Verification queries
-
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 bizcore-platform/
-├── README.md                    # Main project documentation
-├── docs/                        # Detailed documentation
-│   ├── README.md               # This file
-│   ├── TRANSLATION.md          # Translation system guide
-│   ├── RBAC-FIXES-SUMMARY.md   # RBAC security fixes summary
-│   └── RBAC-TESTING-GUIDE.md   # RBAC testing guide
-├── bizcore/                     # Main application
-│   ├── src/main/java/          # Backend (Spring Boot)
-│   └── webapp/                  # Frontend (React)
-└── database/
-    └── migrations/              # SQL migration scripts
+├── database/
+│   ├── setup/
+│   │   ├── tables.sql            # All database tables
+│   │   ├── default-data.sql      # Default data (company, admin, role)
+│   │   └── translations.sql      # Multi-language translations
+│   ├── INSTALLATION.md           # Database setup guide
+│   ├── setup.bat                 # Windows setup script
+│   └── setup.sh                  # Linux/Mac setup script
+│
+├── bizcore/
+│   ├── src/main/java/            # Backend (Spring Boot)
+│   │   └── com/bizcore/
+│   │       ├── controller/       # REST controllers
+│   │       ├── service/          # Business logic
+│   │       ├── repository/       # Data access
+│   │       ├── entity/           # JPA entities
+│   │       └── security/         # Security config
+│   │
+│   └── webapp/                   # Frontend (React)
+│       └── src/
+│           ├── pages/            # React pages
+│           ├── components/       # UI components
+│           ├── hooks/            # Custom hooks
+│           ├── contexts/         # React contexts
+│           └── utils/            # Utilities
+│
+└── docs/                         # This folder
+    ├── README.md                 # This file
+    └── TRANSLATION.md            # i18n guide
 ```
 
-## 🚀 Quick Links
+## Quick Links
 
-- [Main README](../README.md) - Installation and setup guide
+- [Main README](../README.md) - Installation and setup
+- [Database Installation](../database/INSTALLATION.md) - Database setup guide
 - [Translation Guide](TRANSLATION.md) - i18n documentation
-- [RBAC Fixes Summary](RBAC-FIXES-SUMMARY.md) - Security fixes overview
-- [RBAC Testing Guide](RBAC-TESTING-GUIDE.md) - Testing instructions
 
-## 📖 Additional Resources
+## Backend Structure
 
-### Backend (Spring Boot)
-- **Controllers**: `bizcore/src/main/java/com/bizcore/controller/`
-- **Services**: `bizcore/src/main/java/com/bizcore/service/`
-- **Entities**: `bizcore/src/main/java/com/bizcore/entity/`
-- **Security**: `bizcore/src/main/java/com/bizcore/security/`
+| Folder | Description |
+|--------|-------------|
+| `controller/` | REST API endpoints |
+| `service/` | Business logic layer |
+| `repository/` | Database access (JPA) |
+| `entity/` | Database entities |
+| `dto/` | Data transfer objects |
+| `security/` | JWT & authorization |
+| `filter/` | Request filters |
 
-### Frontend (React)
-- **Pages**: `bizcore/webapp/src/pages/`
-- **Components**: `bizcore/webapp/src/components/`
-- **Hooks**: `bizcore/webapp/src/hooks/`
-- **Utils**: `bizcore/webapp/src/utils/`
+## Frontend Structure
 
-### Database
-- **Migrations**: `database/migrations/2026/01/`
-- **Core Tables**: `database/core/tables.sql`
-- **Reference Tables**: `database/references/tables.sql`
+| Folder | Description |
+|--------|-------------|
+| `pages/` | Page components (Dashboard, Users, Roles, etc.) |
+| `components/` | Reusable UI components |
+| `hooks/` | Custom React hooks (useAuth, useTranslation, etc.) |
+| `contexts/` | React context providers |
+| `utils/` | Utility functions |
 
-## 💡 Getting Help
+## Contact
 
-For issues and questions, contact: muhammad.boltayev@greenwhite.uz
+For issues and questions: muhammad.boltayev@greenwhite.uz

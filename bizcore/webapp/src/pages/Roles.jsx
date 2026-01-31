@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../utils/api'
 import { DataTable, Modal, FormInput, ConfirmModal } from '../components'
+import { useToast } from '../hooks/useToast'
 
 export default function Roles() {
   const [roles, setRoles] = useState([])
@@ -18,6 +19,7 @@ export default function Roles() {
   const [formErrors, setFormErrors] = useState({})
   const [saving, setSaving] = useState(false)
 
+  const toast = useToast()
   const user = api.getUser()
   const companyId = user?.companyId
 
@@ -36,7 +38,7 @@ export default function Roles() {
       setPermissions(permissionsRes || [])
     } catch (error) {
       console.error('Error loading data:', error)
-      alert('Failed to load roles data')
+      toast.error('Failed to load roles data')
     } finally {
       setLoading(false)
     }
@@ -107,10 +109,10 @@ export default function Roles() {
 
       await loadData()
       handleCloseModal()
-      alert(`Role ${editingRole ? 'updated' : 'created'} successfully`)
+      toast.success(`Role ${editingRole ? 'updated' : 'created'} successfully`)
     } catch (error) {
       console.error('Error saving role:', error)
-      alert(error.message || 'Failed to save role')
+      toast.error(error.message || 'Failed to save role')
     } finally {
       setSaving(false)
     }
@@ -127,10 +129,10 @@ export default function Roles() {
       await loadData()
       setShowDeleteModal(false)
       setDeletingRole(null)
-      alert('Role deleted successfully')
+      toast.success('Role deleted successfully')
     } catch (error) {
       console.error('Error deleting role:', error)
-      alert(error.message || 'Failed to delete role')
+      toast.error(error.message || 'Failed to delete role')
     }
   }
 

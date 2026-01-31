@@ -30,12 +30,6 @@ public class AuthService {
     private ApplicationRepository applicationRepository;
 
     @Autowired
-    private MenuItemRepository menuItemRepository;
-
-    @Autowired
-    private ThemeRepository themeRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -91,8 +85,6 @@ public class AuthService {
         UserDTO userDTO = convertUserToDTO(user);
         CompanyDTO companyDTO = convertCompanyToDTO(user.getCompany());
         List<ApplicationDTO> apps = getApplicationsForUser(user);
-        List<MenuItemDTO> menus = getMenusForUser(user);
-        ThemeDTO theme = getDefaultTheme();
 
         auditService.logSimple(
             user.getCompany().getId(),
@@ -102,7 +94,7 @@ public class AuthService {
             "User logged in successfully"
         );
 
-        return AuthResponse.success(token, userDTO, companyDTO, apps, menus, theme);
+        return AuthResponse.success(token, userDTO, companyDTO, apps);
     }
 
     public AuthResponse registerCompany(RegisterCompanyRequest request) {
@@ -153,8 +145,6 @@ public class AuthService {
         UserDTO userDTO = convertUserToDTO(savedAdmin);
         CompanyDTO companyDTO = convertCompanyToDTO(savedCompany);
         List<ApplicationDTO> apps = getApplicationsForUser(savedAdmin);
-        List<MenuItemDTO> menus = getMenusForUser(savedAdmin);
-        ThemeDTO theme = getDefaultTheme();
 
         auditService.logSimple(
             savedCompany.getId(),
@@ -164,7 +154,7 @@ public class AuthService {
             "New company registered: " + savedCompany.getName()
         );
 
-        return AuthResponse.success(token, userDTO, companyDTO, apps, menus, theme);
+        return AuthResponse.success(token, userDTO, companyDTO, apps);
     }
 
     private Role createDefaultRoles(Company company) {
@@ -261,98 +251,6 @@ public class AuthService {
         dto.setBaseUrl(app.getBaseUrl());
         dto.setActive(app.isActive());
         dto.setDisplayOrder(app.getDisplayOrder());
-        return dto;
-    }
-
-    private List<MenuItemDTO> getMenusForUser(User user) {
-        List<Long> roleIds = user.getRoles().stream()
-            .map(Role::getId)
-            .collect(Collectors.toList());
-
-        List<MenuItemDTO> allMenus = new ArrayList<>();
-        for (Application app : user.getApplications()) {
-            List<MenuItem> rootMenus = menuItemRepository
-                .findByApplicationIdAndParentIsNullAndActiveTrueOrderByDisplayOrderAsc(app.getId());
-            for (MenuItem menu : rootMenus) {
-                if (canAccessMenu(menu, roleIds)) {
-                    allMenus.add(convertMenuToDTO(menu, roleIds));
-                }
-            }
-        }
-        return allMenus;
-    }
-
-    private boolean canAccessMenu(MenuItem menu, List<Long> userRoleIds) {
-        if (menu.getAllowedRoles().isEmpty()) return true;
-        return menu.getAllowedRoles().stream()
-            .anyMatch(role -> userRoleIds.contains(role.getId()));
-    }
-
-    private MenuItemDTO convertMenuToDTO(MenuItem menu, List<Long> userRoleIds) {
-        MenuItemDTO dto = new MenuItemDTO();
-        dto.setId(menu.getId());
-        dto.setApplicationId(menu.getApplication().getId());
-        dto.setApplicationCode(menu.getApplication().getCode());
-        dto.setCode(menu.getCode());
-        dto.setTitle(menu.getTitle());
-        dto.setIcon(menu.getIcon());
-        dto.setPath(menu.getPath());
-        dto.setDisplayOrder(menu.getDisplayOrder());
-        dto.setActive(menu.isActive());
-        dto.setVisible(menu.isVisible());
-        dto.setRequiredPermission(menu.getRequiredPermission());
-
-        List<MenuItemDTO> children = menu.getChildren().stream()
-            .filter(child -> child.isActive() && canAccessMenu(child, userRoleIds))
-            .map(child -> convertMenuToDTO(child, userRoleIds))
-            .collect(Collectors.toList());
-        dto.setChildren(children);
-
-        return dto;
-    }
-
-    private ThemeDTO getDefaultTheme() {
-        return themeRepository.findByDefaultThemeTrue()
-            .map(this::convertThemeToDTO)
-            .orElseGet(() -> {
-                ThemeDTO dto = new ThemeDTO();
-                dto.setCode("default");
-                dto.setName("Default Theme");
-                dto.setPrimaryColor("#1e3c72");
-                dto.setSecondaryColor("#2a5298");
-                dto.setAccentColor("#7e22ce");
-                dto.setBackgroundColor("#f8fafb");
-                dto.setTextColor("#333333");
-                dto.setErrorColor("#dc3545");
-                dto.setSuccessColor("#28a745");
-                dto.setWarningColor("#ffc107");
-                dto.setFontFamily("-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif");
-                dto.setBorderRadius("12px");
-                dto.setDefaultTheme(true);
-                return dto;
-            });
-    }
-
-    private ThemeDTO convertThemeToDTO(Theme theme) {
-        ThemeDTO dto = new ThemeDTO();
-        dto.setId(theme.getId());
-        dto.setCode(theme.getCode());
-        dto.setName(theme.getName());
-        dto.setDescription(theme.getDescription());
-        dto.setPrimaryColor(theme.getPrimaryColor());
-        dto.setSecondaryColor(theme.getSecondaryColor());
-        dto.setAccentColor(theme.getAccentColor());
-        dto.setBackgroundColor(theme.getBackgroundColor());
-        dto.setTextColor(theme.getTextColor());
-        dto.setErrorColor(theme.getErrorColor());
-        dto.setSuccessColor(theme.getSuccessColor());
-        dto.setWarningColor(theme.getWarningColor());
-        dto.setFontFamily(theme.getFontFamily());
-        dto.setBorderRadius(theme.getBorderRadius());
-        dto.setDarkMode(theme.isDarkMode());
-        dto.setDefaultTheme(theme.isDefaultTheme());
-        dto.setActive(theme.isActive());
-        dto.setCustomCss(theme.getCustomCss());
         return dto;
     }
 }

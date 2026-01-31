@@ -10,11 +10,9 @@ public class AuthResponse {
     private UserDTO user;
     private CompanyDTO company;
     private List<ApplicationDTO> applications;
-    private List<MenuItemDTO> menus;
-    private ThemeDTO theme;
 
     public static AuthResponse success(String token, UserDTO user, CompanyDTO company,
-                                       List<ApplicationDTO> applications, List<MenuItemDTO> menus, ThemeDTO theme) {
+                                       List<ApplicationDTO> applications) {
         AuthResponse response = new AuthResponse();
         response.setSuccess(true);
         response.setMessage("Login successful");
@@ -22,8 +20,6 @@ public class AuthResponse {
         response.setUser(user);
         response.setCompany(company);
         response.setApplications(applications);
-        response.setMenus(menus);
-        response.setTheme(theme);
         return response;
     }
 
@@ -52,10 +48,4 @@ public class AuthResponse {
 
     public List<ApplicationDTO> getApplications() { return applications; }
     public void setApplications(List<ApplicationDTO> applications) { this.applications = applications; }
-
-    public List<MenuItemDTO> getMenus() { return menus; }
-    public void setMenus(List<MenuItemDTO> menus) { this.menus = menus; }
-
-    public ThemeDTO getTheme() { return theme; }
-    public void setTheme(ThemeDTO theme) { this.theme = theme; }
 }

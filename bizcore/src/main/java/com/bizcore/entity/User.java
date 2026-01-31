@@ -42,10 +42,10 @@ public class User {
 
     private String avatar;
 
-    @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")
+    @Column(name = "active", nullable = false, columnDefinition = "boolean default true")
     private Boolean active = true;
 
-    @Column(name = "is_email_verified", nullable = false, columnDefinition = "boolean default false")
+    @Column(name = "email_verified", nullable = false, columnDefinition = "boolean default false")
     private Boolean emailVerified = false;
 
     @Column(name = "last_login")

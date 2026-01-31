@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import api from '../utils/api'
 import { DataTable } from '../components'
+import { useToast } from '../hooks/useToast'
 
 export default function Permissions() {
   const [permissions, setPermissions] = useState([])
   const [loading, setLoading] = useState(true)
   const [selectedModule, setSelectedModule] = useState('all')
+
+  const toast = useToast()
 
   useEffect(() => {
     loadData()
@@ -18,7 +21,7 @@ export default function Permissions() {
       setPermissions(res || [])
     } catch (error) {
       console.error('Error loading permissions:', error)
-      alert('Failed to load permissions data')
+      toast.error('Failed to load permissions data')
     } finally {
       setLoading(false)
     }

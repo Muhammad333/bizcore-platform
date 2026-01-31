@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import api from '../utils/api'
 import { DataTable, Modal, FormInput, MultiSelect, ConfirmModal } from '../components'
+import { useToast } from '../hooks/useToast'
 
 export default function Users() {
   const [users, setUsers] = useState([])
@@ -24,6 +25,7 @@ export default function Users() {
   const [formErrors, setFormErrors] = useState({})
   const [saving, setSaving] = useState(false)
 
+  const toast = useToast()
   const user = api.getUser()
   const companyId = user?.companyId
 
@@ -42,7 +44,7 @@ export default function Users() {
       setRoles(rolesRes || [])
     } catch (error) {
       console.error('Error loading data:', error)
-      alert('Failed to load users data')
+      toast.error('Failed to load users data')
     } finally {
       setLoading(false)
     }
@@ -152,10 +154,10 @@ export default function Users() {
 
       await loadData()
       handleCloseModal()
-      alert(`User ${editingUser ? 'updated' : 'created'} successfully`)
+      toast.success(`User ${editingUser ? 'updated' : 'created'} successfully`)
     } catch (error) {
       console.error('Error saving user:', error)
-      alert(error.message || 'Failed to save user')
+      toast.error(error.message || 'Failed to save user')
     } finally {
       setSaving(false)
     }
@@ -172,10 +174,10 @@ export default function Users() {
       await loadData()
       setShowDeleteModal(false)
       setDeletingUser(null)
-      alert('User deleted successfully')
+      toast.success('User deleted successfully')
     } catch (error) {
       console.error('Error deleting user:', error)
-      alert(error.message || 'Failed to delete user')
+      toast.error(error.message || 'Failed to delete user')
     }
   }
 
@@ -186,10 +188,10 @@ export default function Users() {
         : `/users/${user.id}/activate`
       await api.put(endpoint, {})
       await loadData()
-      alert(`User ${user.active ? 'deactivated' : 'activated'} successfully`)
+      toast.success(`User ${user.active ? 'deactivated' : 'activated'} successfully`)
     } catch (error) {
       console.error('Error toggling user status:', error)
-      alert(error.message || 'Failed to update user status')
+      toast.error(error.message || 'Failed to update user status')
     }
   }
 

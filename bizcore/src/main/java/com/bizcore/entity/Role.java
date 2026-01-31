@@ -26,10 +26,10 @@ public class Role {
 
     private String description;
 
-    @Column(name = "is_system_role")
+    @Column(name = "system_role")
     private boolean systemRole = false;
 
-    @Column(name = "is_active")
+    @Column(name = "active")
     private boolean active = true;
 
     @ManyToMany(mappedBy = "roles")

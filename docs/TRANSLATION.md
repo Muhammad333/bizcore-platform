@@ -398,17 +398,17 @@ location.reload()
 // Should load Russian translations
 ```
 
-## Migration: Add New Translations
+## Adding New Translations
 
-See: `database/migrations/2026/01/add-missing-translations.sql`
+Add to `database/setup/translations.sql` or run directly:
 
 ```sql
 -- Template for new translations
-INSERT INTO translations ("key", language, value, module) VALUES
-('module.key', 'en', 'English Text', 'MODULE'),
-('module.key', 'ru', 'Русский текст', 'MODULE'),
-('module.key', 'uz', 'O''zbek matni', 'MODULE')
-ON CONFLICT ("key", language) DO UPDATE SET
+INSERT INTO translations (key, language, value, module) VALUES
+('module.key', 'en', 'English Text', 'module'),
+('module.key', 'ru', 'Русский текст', 'module'),
+('module.key', 'uz', 'O''zbek matni', 'module')
+ON CONFLICT (key, language) DO UPDATE SET
     value = EXCLUDED.value,
     updated_at = NOW();
 ```

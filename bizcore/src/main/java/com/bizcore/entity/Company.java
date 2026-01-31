@@ -43,7 +43,7 @@ public class Company {
 
     private String website;
 
-    @Column(name = "is_active")
+    @Column(name = "active")
     private boolean active = true;
 
     @Column(name = "subscription_plan")
